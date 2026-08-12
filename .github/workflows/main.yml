@@ -9,7 +9,7 @@ on:
 jobs:
   build-android:
     name: Build APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -22,9 +22,11 @@ jobs:
 
       - name: Install system dependencies
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
 
           sudo apt-get install -y \
+            build-essential \
             git \
             zip \
             unzip \
@@ -32,24 +34,32 @@ jobs:
             python3-pip \
             python3-venv \
             autoconf \
+            automake \
+            autotools-dev \
             libtool \
+            libtool-bin \
+            m4 \
+            gettext \
+            autopoint \
             pkg-config \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            libtinfo6 \
+            patch \
             cmake \
+            ccache \
+            zlib1g-dev \
             libffi-dev \
             libssl-dev \
-            automake \
-            autopoint \
-            gettext \
-            build-essential
+            libltdl-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            libtinfo-dev
+
+          libtoolize --version
+          autoreconf --version
 
       - name: Create build environment
         run: |
           python -m venv .build-venv
-
           . .build-venv/bin/activate
 
           python -m pip install --upgrade \
@@ -57,8 +67,9 @@ jobs:
             setuptools \
             wheel
 
-          python -m pip install buildozer
-          python -m pip install "cython==0.29.34"
+          python -m pip install \
+            buildozer \
+            "cython==0.29.33"
 
       - name: Build APK
         env:
