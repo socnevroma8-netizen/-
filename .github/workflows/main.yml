@@ -60,6 +60,11 @@ jobs:
           if [ ! -x "$SDKMANAGER" ]; then
             SDKMANAGER="/home/runner/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
           fi
+          if [ ! -x "$SDKMANAGER" ]; then
+            echo "sdkmanager not found"
+            find /home/runner/.buildozer/android/platform/android-sdk -name sdkmanager
+            exit 1
+          fi
           yes | "$SDKMANAGER" --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses || true
       - name: Build APK
         env:
