@@ -23,6 +23,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
+
           sudo apt-get install -y \
             git \
             zip \
@@ -48,30 +49,20 @@ jobs:
       - name: Create build environment
         run: |
           python -m venv .build-venv
+
           . .build-venv/bin/activate
-          python -m pip install --upgrade pip setuptools wheel
+
+          python -m pip install --upgrade \
+            pip \
+            setuptools \
+            wheel
+
           python -m pip install buildozer
           python -m pip install "cython==0.29.34"
-          python -m pip install legacy-cgi
-      - name: Accept Android licenses
-        run: |
-          . .build-venv/bin/activate
-          SDKMANAGER="/home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager"
-          if [ ! -x "$SDKMANAGER" ]; then
-            SDKMANAGER="/home/runner/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
-          fi
-          if [ ! -x "$SDKMANAGER" ]; then
-            echo "sdkmanager not found"
-            find /home/runner/.buildozer/android/platform/android-sdk -name sdkmanager
-            exit 1
-          fi
-          yes | "$SDKMANAGER" --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses || true
+
       - name: Build APK
         env:
           BUILDOZER_WARN_ON_ROOT: "0"
-          ANDROIDSDK_ACCEPT_LICENSE: "1"
-          ANDROID_SDK_ROOT: /home/runner/.buildozer/android/platform/android-sdk
-          ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
         run: |
           . .build-venv/bin/activate
           buildozer -v android debug
