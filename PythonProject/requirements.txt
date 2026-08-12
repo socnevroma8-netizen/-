@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+pandas
+openpyxl
+kivy
+kivymd
+requests
