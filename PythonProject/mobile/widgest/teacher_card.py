@@ -1,1 +1,0 @@
-from kivymd.uix.card import MDCard
