@@ -55,9 +55,12 @@ jobs:
           python -m pip install legacy-cgi
       - name: Accept Android licenses
         run: |
-          source .build-venv/bin/activate
-          yes | sdkmanager --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses || true
-
+          . .build-venv/bin/activate
+          SDKMANAGER="/home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="/home/runner/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager"
+          fi
+          yes | "$SDKMANAGER" --sdk_root=/home/runner/.buildozer/android/platform/android-sdk --licenses || true
       - name: Build APK
         env:
           BUILDOZER_WARN_ON_ROOT: "0"
@@ -66,7 +69,6 @@ jobs:
           ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
         run: |
           . .build-venv/bin/activate
-          yes | sdkmanager --licenses || true
           buildozer -v android debug
 
       - name: Upload APK
