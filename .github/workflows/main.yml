@@ -81,6 +81,10 @@ jobs:
           BUILDOZER_WARN_ON_ROOT: "0"
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
         run: |
+          export PATH="$JAVA_HOME/bin:$PATH"
+          echo "JAVA_HOME=$JAVA_HOME"
+          which java
+          java -version
           . .build-venv/bin/activate
           buildozer -v android debug
       - name: Upload APK
