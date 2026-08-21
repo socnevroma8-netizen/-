@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f1ff; color: #25223a; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; background: #fff; border-bottom: 1px solid #e6e1f4; }
+    main { max-width: 900px; margin: 0 auto; padding: 30px 20px 50px; }
+    a { color: #7657ee; text-decoration: none; }
+    .card { margin-top: 20px; padding: 24px; background: #fff; border: 1px solid #e6e1f4; border-radius: 18px; box-shadow: 0 6px 22px rgba(77,55,140,.06); }
+    nav { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px; }
+    nav a { padding: 10px 14px; background: #fff; border: 1px solid #e6e1f4; border-radius: 10px; }
+  </style>
+</head>
+<body>
+<header>
+  <a href="/web/home">← Главная</a>
+  <span>{{ user.grade }}{% if user.profile %} / {{ user.profile }}{% endif %}</span>
+  <a href="/web/logout">Выйти</a>
+</header>
+<main>
+  <h1>{{ title }}</h1>
+  <section class="card">
+    <p>{{ message }}</p>
+  </section>
+  <nav>
+    <a href="/web/home">Главная</a>
+    <a href="/web/schedule">Расписание</a>
+    <a href="/web/reminders">Напоминания</a>
+    <a href="/web/transfers">Трансферы</a>
+    {% if user.is_admin %}<a href="/web/users">База пользователей</a>{% endif %}
+  </nav>
+</main>
+</body>
+</html>
