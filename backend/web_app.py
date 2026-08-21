@@ -96,13 +96,17 @@ def schedule_page(request: Request, db=Depends(get_db)):
     if not user:
         return RedirectResponse(url="/web/login", status_code=302)
 
+    class_key = user["grade"]
+    if user.get("profile"):
+        class_key = f'{user["grade"]} / {user["profile"]}'
+
     rows = db.execute(
         text(
             "SELECT day, lesson_number, lesson_time, subject, teacher_name, cabinet "
             "FROM lessons WHERE grade = :grade "
-            "ORDER BY lesson_number"
+            "ORDER BY day, lesson_number"
         ),
-        {"grade": user["grade"]},
+        {"grade": class_key},
     ).mappings().all()
 
     days = {}
