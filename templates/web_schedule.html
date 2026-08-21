@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание</title>
+    <link rel="stylesheet" href="/static/css/web.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="brand">
+            <div class="logo-circle small">ДГ</div>
+            <span class="brand-name">{{ user.grade }}{% if user.profile %} / {{ user.profile }}{% endif %}</span>
+        </div>
+        <a href="/web/logout" class="logout-link" title="Выйти">⏻</a>
+    </header>
+
+    <main class="schedule-wrap">
+        {% if not days %}
+        <p class="empty-state">Расписание пока не найдено для класса {{ user.grade }}.</p>
+        {% endif %}
+
+        {% for day, lessons in days %}
+        <section class="day-card">
+            <h2 class="day-title">{{ day }}</h2>
+            <div class="lesson-list">
+                {% for lesson in lessons %}
+                <div class="lesson-row">
+                    <div class="lesson-number">{{ lesson.lesson_number }}</div>
+                    <div class="lesson-info">
+                        <div class="lesson-subject">{{ lesson.subject }}</div>
+                        <div class="lesson-meta">
+                            {% if lesson.lesson_time %}<span>{{ lesson.lesson_time }}</span>{% endif %}
+                            {% if lesson.teacher_name %}<span>{{ lesson.teacher_name }}</span>{% endif %}
+                            {% if lesson.cabinet %}<span>каб. {{ lesson.cabinet }}</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+    </main>
+
+    <footer class="update-info">Обновлено: {{ updated_at }}</footer>
+</body>
+</html>
