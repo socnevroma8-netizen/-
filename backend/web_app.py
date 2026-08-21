@@ -48,8 +48,9 @@ def web_root(request: Request, db=Depends(get_db)):
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
     return templates.TemplateResponse(
-        "web_login.html",
-        {"request": request, "error": None},
+        request=request,
+        name="web_login.html",
+        context={"error": None},
     )
 
 
@@ -70,8 +71,9 @@ def login_submit(
 
     if not row or row["password"] != password:
         return templates.TemplateResponse(
-            "web_login.html",
-            {"request": request, "error": "Неверный логин или пароль"},
+            request=request,
+            name="web_login.html",
+            context={"error": "Неверный логин или пароль"},
             status_code=401,
         )
 
@@ -113,9 +115,9 @@ def schedule_page(request: Request, db=Depends(get_db)):
             ordered_days.append((day, days[day]))
 
     return templates.TemplateResponse(
-        "web_schedule.html",
-        {
-            "request": request,
+        request=request,
+        name="web_schedule.html",
+        context={
             "user": user,
             "days": ordered_days,
             "updated_at": datetime.now().strftime("%d.%m.%Y %H:%M"),
