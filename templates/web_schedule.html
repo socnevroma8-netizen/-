@@ -1,47 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расписание</title>
-    <link rel="stylesheet" href="/static/css/web.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Расписание</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f1ff; color: #25223a; }
+    header { height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: #fff; border-bottom: 1px solid #e6e1f4; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+    .logo { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: #7657ee; }
+    .muted { color: #8f89a8; font-size: 14px; }
+    a { color: inherit; text-decoration: none; }
+    main { max-width: 1000px; margin: 0 auto; padding: 30px 20px 50px; }
+    h1 { margin: 0 0 6px; font-size: 30px; }
+    .topline { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back { color: #7657ee; font-weight: 600; }
+    .days { display: flex; gap: 8px; overflow-x: auto; padding: 18px 0 8px; }
+    .day { white-space: nowrap; padding: 10px 14px; border-radius: 12px; background: #fff; border: 1px solid #e6e1f4; }
+    .day:hover, .day.active { background: #7657ee; color: #fff; border-color: #7657ee; }
+    .card { margin-top: 14px; background: #fff; border: 1px solid #e6e1f4; border-radius: 18px; padding: 22px; box-shadow: 0 6px 22px rgba(77, 55, 140, .06); }
+    .lesson { display: grid; grid-template-columns: 54px 120px 1fr; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid #eeeaf8; }
+    .lesson:last-child { border-bottom: 0; }
+    .number { color: #7657ee; font-weight: 700; font-size: 20px; }
+    .subject { font-weight: 700; }
+    .details { color: #8f89a8; font-size: 13px; margin-top: 5px; }
+    .footer-nav { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+    .footer-nav a { padding: 10px 14px; background: #fff; border: 1px solid #e6e1f4; border-radius: 10px; }
+    @media (max-width: 700px) { header { padding: 0 16px; } main { padding: 22px 14px 40px; } .lesson { grid-template-columns: 34px 82px 1fr; gap: 8px; } h1 { font-size: 25px; } }
+  </style>
 </head>
 <body>
-    <header class="top-bar">
-        <div class="brand">
-            <div class="logo-circle small">ДГ</div>
-            <span class="brand-name">{{ user.grade }}{% if user.profile %} / {{ user.profile }}{% endif %}</span>
-        </div>
-        <a href="/web/logout" class="logout-link" title="Выйти">⏻</a>
-    </header>
-
-    <main class="schedule-wrap">
-        {% if not days %}
-        <p class="empty-state">Расписание пока не найдено для класса {{ user.grade }}.</p>
-        {% endif %}
-
-        {% for day, lessons in days %}
-        <section class="day-card">
-            <h2 class="day-title">{{ day }}</h2>
-            <div class="lesson-list">
-                {% for lesson in lessons %}
-                <div class="lesson-row">
-                    <div class="lesson-number">{{ lesson.lesson_number }}</div>
-                    <div class="lesson-info">
-                        <div class="lesson-subject">{{ lesson.subject }}</div>
-                        <div class="lesson-meta">
-                            {% if lesson.lesson_time %}<span>{{ lesson.lesson_time }}</span>{% endif %}
-                            {% if lesson.teacher_name %}<span>{{ lesson.teacher_name }}</span>{% endif %}
-                            {% if lesson.cabinet %}<span>каб. {{ lesson.cabinet }}</span>{% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-        {% endfor %}
-    </main>
-
-    <footer class="update-info">Обновлено: {{ updated_at }}</footer>
+<header>
+  <a class="brand" href="/web/home"><span class="logo">ДГ</span><span>{{ user.grade }}{% if user.profile %} / {{ user.profile }}{% endif %}</span></a>
+  <a class="muted" href="/web/logout">Выйти</a>
+</header>
+<main>
+  <div class="topline">
+    <div><h1>Расписание</h1><div class="muted">Обновлено: {{ updated_at }}</div></div>
+    <a class="back" href="/web/home">← Главная</a>
+  </div>
+  <nav class="days">
+    {% for day, lessons in days %}
+      <a class="day {% if loop.first %}active{% endif %}" href="#day-{{ loop.index }}">{{ day }}</a>
+    {% endfor %}
+  </nav>
+  {% for day, lessons in days %}
+  <section class="card" id="day-{{ loop.index }}">
+    <h2>{{ day }}</h2>
+    {% for lesson in lessons %}
+    <div class="lesson">
+      <div class="number">{{ lesson.lesson_number }}</div>
+      <div>{{ lesson.lesson_time or 'Время не указано' }}</div>
+      <div><div class="subject">{{ lesson.subject }}</div><div class="details">{% if lesson.cabinet %}Кабинет: {{ lesson.cabinet }}{% endif %}{% if lesson.teacher_name %} · {{ lesson.teacher_name }}{% endif %}</div></div>
+    </div>
+    {% endfor %}
+  </section>
+  {% else %}
+  <section class="card"><div class="muted">Расписание не найдено.</div></section>
+  {% endfor %}
+  <nav class="footer-nav">
+    <a href="/web/home">Главная</a>
+    <a href="/web/reminders">Напоминания</a>
+    <a href="/web/teachers">Преподаватели</a>
+    <a href="/web/transfers">Трансферы</a>
+    {% if user.is_admin %}<a href="/web/users">База пользователей</a>{% endif %}
+  </nav>
+</main>
 </body>
 </html>
